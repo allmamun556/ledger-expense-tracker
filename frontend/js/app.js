@@ -316,10 +316,10 @@ function currentExportParams() {
   };
 }
 document.getElementById("export-csv-btn").addEventListener("click", () => {
-  window.open(Api.exportCsvUrl(currentExportParams()), "_blank");
+  Api.exportCsv(currentExportParams()).catch((err) => alert(err.message));
 });
 document.getElementById("settings-export-btn").addEventListener("click", () => {
-  window.open(Api.exportCsvUrl({}), "_blank");
+  Api.exportCsv({}).catch((err) => alert(err.message));
 });
 
 document.getElementById("open-add-expense-list").addEventListener("click", () => openExpenseModal());
