@@ -316,10 +316,12 @@ function currentExportParams() {
   };
 }
 document.getElementById("export-csv-btn").addEventListener("click", () => {
-  Api.exportCsv(currentExportParams()).catch((err) => alert(err.message));
+  const format = document.getElementById("export-format").value;
+  Api.exportExpenses(format, currentExportParams()).catch((err) => alert(err.message));
 });
 document.getElementById("settings-export-btn").addEventListener("click", () => {
-  Api.exportCsv({}).catch((err) => alert(err.message));
+  const format = document.getElementById("settings-export-format").value;
+  Api.exportExpenses(format, {}).catch((err) => alert(err.message));
 });
 
 document.getElementById("open-add-expense-list").addEventListener("click", () => openExpenseModal());

@@ -4,6 +4,11 @@ import io
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import StreamingResponse
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -60,6 +65,14 @@ def list_expenses(
     return schemas.PaginatedExpenses(total=total, page=page, page_size=page_size, items=items)
 
 
+def _export_rows(db, current_user, date_from, date_to, category_id):
+    return (
+        _apply_filters(db.query(models.Expense), current_user, date_from, date_to, category_id, None)
+        .order_by(models.Expense.date.desc())
+        .all()
+    )
+
+
 @router.get("/export.csv")
 def export_expenses_csv(
     date_from: dt.date | None = None,
@@ -68,14 +81,12 @@ def export_expenses_csv(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
-    query = _apply_filters(
-        db.query(models.Expense), current_user, date_from, date_to, category_id, None
-    ).order_by(models.Expense.date.desc())
+    rows = _export_rows(db, current_user, date_from, date_to, category_id)
 
     buffer = io.StringIO()
     writer = csv.writer(buffer)
     writer.writerow(["Date", "Amount", "Currency", "Category", "Description", "Payment Method", "Notes"])
-    for e in query.all():
+    for e in rows:
         writer.writerow(
             [
                 e.date.isoformat(),
@@ -92,6 +103,80 @@ def export_expenses_csv(
         iter([buffer.getvalue()]),
         media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=expenses_export.csv"},
+    )
+
+
+@router.get("/export.pdf")
+def export_expenses_pdf(
+    date_from: dt.date | None = None,
+    date_to: dt.date | None = None,
+    category_id: int | None = None,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    rows = _export_rows(db, current_user, date_from, date_to, category_id)
+    styles = getSampleStyleSheet()
+
+    elements = [
+        Paragraph("Ledger &mdash; Expense Report", styles["Title"]),
+        Paragraph(f"Account: {current_user.email}", styles["Normal"]),
+    ]
+    if date_from or date_to:
+        elements.append(
+            Paragraph(f"Period: {date_from or 'earliest'} to {date_to or 'latest'}", styles["Normal"])
+        )
+    elements.append(
+        Paragraph(f"Generated: {dt.datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}", styles["Normal"])
+    )
+    elements.append(Spacer(1, 16))
+
+    total = sum(e.amount for e in rows)
+    elements.append(
+        Paragraph(
+            f"Total: {total:,.2f} {current_user.currency} across {len(rows)} expense(s)", styles["Heading3"]
+        )
+    )
+    elements.append(Spacer(1, 12))
+
+    table_data = [["Date", "Category", "Description", "Payment", "Amount"]]
+    for e in rows:
+        table_data.append(
+            [
+                e.date.isoformat(),
+                e.category.name if e.category else "—",
+                e.description or "",
+                e.payment_method,
+                f"{e.amount:,.2f}",
+            ]
+        )
+
+    table = Table(
+        table_data,
+        colWidths=[0.9 * inch, 1.3 * inch, 2.3 * inch, 1.0 * inch, 1.0 * inch],
+        repeatRows=1,
+    )
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1B2A2F")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+                ("FONTSIZE", (0, 0), (-1, -1), 9),
+                ("ALIGN", (-1, 0), (-1, -1), "RIGHT"),
+                ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#D8D0C8")),
+                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#F7F3EE")]),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ]
+        )
+    )
+    elements.append(table)
+
+    buffer = io.BytesIO()
+    SimpleDocTemplate(buffer, pagesize=letter, title="Ledger Expense Report").build(elements)
+    buffer.seek(0)
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=expenses_export.pdf"},
     )
 
 

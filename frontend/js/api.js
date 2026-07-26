@@ -117,11 +117,11 @@ const Api = {
   createExpense: (payload) => apiRequest("/api/expenses", { method: "POST", body: payload }),
   updateExpense: (id, payload) => apiRequest(`/api/expenses/${id}`, { method: "PATCH", body: payload }),
   deleteExpense: (id) => apiRequest(`/api/expenses/${id}`, { method: "DELETE" }),
-  exportCsv: async (params = {}) => {
+  exportExpenses: async (format, params = {}) => {
     const qs = new URLSearchParams(
       Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== ""))
     ).toString();
-    const res = await fetch(`${API_BASE}/api/expenses/export.csv${qs ? `?${qs}` : ""}`, {
+    const res = await fetch(`${API_BASE}/api/expenses/export.${format}${qs ? `?${qs}` : ""}`, {
       headers: { Authorization: `Bearer ${Auth.getToken()}` },
     });
     if (!res.ok) throw new ApiError(`Export failed (${res.status})`, res.status);
@@ -130,7 +130,7 @@ const Api = {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "expenses_export.csv";
+    a.download = `expenses_export.${format}`;
     document.body.appendChild(a);
     a.click();
     a.remove();

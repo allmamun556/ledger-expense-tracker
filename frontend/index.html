@@ -131,7 +131,11 @@
           <div class="sub">Every entry, filterable and sortable.</div>
         </div>
         <div style="display:flex; gap:10px;">
-          <button class="btn btn-ghost" id="export-csv-btn">Export CSV</button>
+          <select id="export-format" title="Export format">
+            <option value="csv">CSV</option>
+            <option value="pdf">PDF</option>
+          </select>
+          <button class="btn btn-ghost" id="export-csv-btn">Export</button>
           <button class="btn btn-copper" id="open-add-expense-list">+ Add expense</button>
         </div>
       </div>
@@ -262,8 +266,14 @@
 
         <div class="card settings-card">
           <h3>Export your data</h3>
-          <p class="sub" style="margin-bottom:14px;">Download every expense as a CSV file.</p>
-          <button class="btn btn-ghost" id="settings-export-btn">Export all expenses (CSV)</button>
+          <p class="sub" style="margin-bottom:14px;">Download every expense as a CSV or PDF file.</p>
+          <div style="display:flex; gap:10px;">
+            <select id="settings-export-format" title="Export format">
+              <option value="csv">CSV</option>
+              <option value="pdf">PDF</option>
+            </select>
+            <button class="btn btn-ghost" id="settings-export-btn">Export all expenses</button>
+          </div>
         </div>
 
         <div class="card settings-card">
