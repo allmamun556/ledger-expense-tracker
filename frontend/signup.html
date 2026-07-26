@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Create account — Ledger</title>
+<link rel="stylesheet" href="css/style.css" />
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <div class="auth-shell">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="mark">L</div>
+        <div class="name">Ledger</div>
+      </div>
+
+      <h1>Create your account</h1>
+      <p class="auth-sub">Track daily and monthly spending in one clear place.</p>
+
+      <div id="google-btn-container"></div>
+      <div class="divider">or sign up with email</div>
+
+      <form id="signup-form" novalidate>
+        <div class="field">
+          <label for="signup-name">Full name</label>
+          <input id="signup-name" type="text" required autocomplete="name" placeholder="Your name" />
+        </div>
+        <div class="field">
+          <label for="signup-email">Email</label>
+          <input id="signup-email" type="email" required autocomplete="email" placeholder="you@example.com" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="signup-password">Password</label>
+            <input id="signup-password" type="password" required autocomplete="new-password" placeholder="At least 6 characters" />
+          </div>
+          <div class="field">
+            <label for="signup-confirm">Confirm</label>
+            <input id="signup-confirm" type="password" required autocomplete="new-password" placeholder="Repeat password" />
+          </div>
+        </div>
+        <div class="error-text" id="signup-error"></div>
+        <button type="submit" id="signup-submit" class="btn btn-primary btn-block">Create account</button>
+      </form>
+
+      <p class="auth-foot">Already have an account? <a href="login.html">Sign in</a></p>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

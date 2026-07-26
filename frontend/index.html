@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ledger — Expense Tracker</title>
+<link rel="stylesheet" href="css/style.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="mobile-topbar">
+  <button id="mobile-menu-btn" aria-label="Open menu">☰</button>
+  <div class="name" style="font-family:var(--font-display);font-size:17px;">Ledger</div>
+  <div style="width:22px;"></div>
+</div>
+
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="mark">L</div>
+      <div class="name">Ledger</div>
+    </div>
+
+    <nav>
+      <button class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" data-view="expenses">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        Expenses
+      </button>
+      <button class="nav-item" data-view="categories">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.6 12.6 12 21.2a2 2 0 0 1-2.8 0l-7.4-7.4a2 2 0 0 1 0-2.8L10.4 2.4A2 2 0 0 1 12 2h6.6A2.4 2.4 0 0 1 21 4.4V11a2 2 0 0 1-.4 1.6Z"/><circle cx="15" cy="8" r="1.5"/></svg>
+        Categories
+      </button>
+      <button class="nav-item" data-view="budgets">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5.5a5 5 0 0 0-5-1.5c-2.8 0-5 1.6-5 4s2.2 3.6 5 4 5 1.6 5 4-2.2 4-5 4a5 5 0 0 1-5-1.5"/></svg>
+        Budgets
+      </button>
+      <button class="nav-item" data-view="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15 1.65 1.65 0 0 0 3.17 14H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.14.5.5.9.99 1.09.28.1.58.15.88.15H21a2 2 0 0 1 0 4h-.09c-.3 0-.6.05-.88.15-.49.19-.85.59-1 .09Z"/></svg>
+        Settings
+      </button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="user-chip">
+        <img id="user-avatar-img" class="hidden" alt="" />
+        <div id="user-avatar-fallback" class="avatar-fallback">?</div>
+        <div class="who">
+          <div class="name" id="user-name">—</div>
+          <div class="email" id="user-email">—</div>
+        </div>
+      </div>
+      <button class="logout-link" id="logout-btn">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ============ DASHBOARD VIEW ============ -->
+    <section class="view active" id="view-dashboard">
+      <div class="page-head">
+        <div>
+          <h1>Good to see you, <span id="greeting-name">there</span></h1>
+          <div class="sub" id="dashboard-date"></div>
+        </div>
+        <button class="btn btn-copper" id="open-add-expense-dash">+ Add expense</button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="card stat-card">
+          <div class="eyebrow">Today</div>
+          <div class="value" id="stat-today">—</div>
+        </div>
+        <div class="card stat-card">
+          <div class="eyebrow">This week</div>
+          <div class="value" id="stat-week">—</div>
+        </div>
+        <div class="card stat-card">
+          <div class="eyebrow">This month</div>
+          <div class="value" id="stat-month">—</div>
+          <div class="delta" id="stat-month-delta"></div>
+        </div>
+        <div class="card stat-card">
+          <div class="eyebrow">Monthly budget left</div>
+          <div class="value" id="stat-budget">—</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="card chart-card">
+          <h3>Spending trend</h3>
+          <div class="sub">Last 6 months</div>
+          <canvas id="chart-monthly" height="230"></canvas>
+        </div>
+        <div class="card chart-card">
+          <h3>This month by category</h3>
+          <div class="sub" id="donut-sub"></div>
+          <canvas id="chart-category" height="230"></canvas>
+        </div>
+      </div>
+
+      <div class="ledger">
+        <div class="ledger-toolbar">
+          <strong style="font-size:14.5px;">Recent expenses</strong>
+          <div class="spacer"></div>
+          <button class="btn btn-ghost btn-sm" data-goto="expenses">View all</button>
+        </div>
+        <table class="ledger-table">
+          <thead>
+            <tr><th>Date</th><th>Description</th><th>Category</th><th style="text-align:right;">Amount</th></tr>
+          </thead>
+          <tbody id="recent-expenses-body"></tbody>
+        </table>
+        <div id="recent-empty" class="empty-state hidden">
+          <div class="glyph">🧾</div>
+          <h3>No expenses yet</h3>
+          <p>Add your first expense to see it here.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ EXPENSES VIEW ============ -->
+    <section class="view" id="view-expenses">
+      <div class="page-head">
+        <div>
+          <h1>Expenses</h1>
+          <div class="sub">Every entry, filterable and sortable.</div>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-ghost" id="export-csv-btn">Export CSV</button>
+          <button class="btn btn-copper" id="open-add-expense-list">+ Add expense</button>
+        </div>
+      </div>
+
+      <div class="ledger">
+        <div class="ledger-toolbar">
+          <input type="text" class="search" id="filter-search" placeholder="Search description or notes…" />
+          <select id="filter-category"><option value="">All categories</option></select>
+          <input type="date" id="filter-from" title="From" />
+          <input type="date" id="filter-to" title="To" />
+          <select id="filter-sort">
+            <option value="date-desc">Newest first</option>
+            <option value="date-asc">Oldest first</option>
+            <option value="amount-desc">Highest amount</option>
+            <option value="amount-asc">Lowest amount</option>
+          </select>
+        </div>
+        <table class="ledger-table">
+          <thead>
+            <tr><th>Date</th><th>Description</th><th>Category</th><th>Payment</th><th style="text-align:right;">Amount</th><th></th></tr>
+          </thead>
+          <tbody id="expenses-body"></tbody>
+        </table>
+        <div id="expenses-empty" class="empty-state hidden">
+          <div class="glyph">🧾</div>
+          <h3>No matching expenses</h3>
+          <p>Try adjusting your filters, or add a new expense.</p>
+        </div>
+        <div class="pagination">
+          <span id="pagination-info">—</span>
+          <div class="controls">
+            <button class="btn btn-ghost btn-sm" id="prev-page">Previous</button>
+            <button class="btn btn-ghost btn-sm" id="next-page">Next</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CATEGORIES VIEW ============ -->
+    <section class="view" id="view-categories">
+      <div class="page-head">
+        <div>
+          <h1>Categories</h1>
+          <div class="sub">Organize spending into groups that make sense to you.</div>
+        </div>
+        <button class="btn btn-copper" id="open-add-category">+ New category</button>
+      </div>
+      <div class="category-grid" id="category-grid"></div>
+    </section>
+
+    <!-- ============ BUDGETS VIEW ============ -->
+    <section class="view" id="view-budgets">
+      <div class="page-head">
+        <div>
+          <h1>Budgets</h1>
+          <div class="sub">Set a monthly limit per category and watch your progress.</div>
+        </div>
+        <button class="btn btn-copper" id="open-add-budget">+ Set budget</button>
+      </div>
+      <div class="card" style="padding:20px 24px;">
+        <div id="budgets-list"></div>
+        <div id="budgets-empty" class="empty-state hidden">
+          <div class="glyph">🎯</div>
+          <h3>No budgets set</h3>
+          <p>Set a monthly limit for a category to start tracking progress.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS VIEW ============ -->
+    <section class="view" id="view-settings">
+      <div class="page-head">
+        <div>
+          <h1>Settings</h1>
+          <div class="sub">Your profile and preferences.</div>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <div class="card settings-card">
+          <h3>Profile</h3>
+          <form id="profile-form">
+            <div class="field">
+              <label for="settings-name">Full name</label>
+              <input id="settings-name" type="text" />
+            </div>
+            <div class="field">
+              <label for="settings-email">Email</label>
+              <input id="settings-email" type="email" disabled />
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="settings-currency">Currency</label>
+                <select id="settings-currency">
+                  <option value="EUR">EUR (€)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="BDT">BDT (৳)</option>
+                  <option value="INR">INR (₹)</option>
+                  <option value="JPY">JPY (¥)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="settings-budget">Monthly budget</label>
+                <input id="settings-budget" type="number" min="0" step="0.01" placeholder="0.00" />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </form>
+        </div>
+
+        <div class="card settings-card">
+          <h3>Password</h3>
+          <p class="sub" style="margin-bottom:14px;" id="password-hint">Change the password used to sign in.</p>
+          <form id="password-form">
+            <div class="field">
+              <label for="current-password">Current password</label>
+              <input id="current-password" type="password" autocomplete="current-password" />
+            </div>
+            <div class="field">
+              <label for="new-password">New password</label>
+              <input id="new-password" type="password" autocomplete="new-password" />
+            </div>
+            <div class="error-text" id="password-error"></div>
+            <button type="submit" class="btn btn-ghost">Update password</button>
+          </form>
+        </div>
+
+        <div class="card settings-card">
+          <h3>Export your data</h3>
+          <p class="sub" style="margin-bottom:14px;">Download every expense as a CSV file.</p>
+          <button class="btn btn-ghost" id="settings-export-btn">Export all expenses (CSV)</button>
+        </div>
+
+        <div class="card settings-card">
+          <h3>Account</h3>
+          <p class="sub" style="margin-bottom:14px;">Sign out of Ledger on this device.</p>
+          <button class="btn btn-danger" id="settings-logout-btn">Sign out</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ EXPENSE MODAL ============ -->
+<div class="modal-overlay" id="expense-modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="expense-modal-title">Add expense</h2>
+      <button class="modal-close" data-close-modal="expense-modal-overlay">×</button>
+    </div>
+    <form id="expense-form">
+      <input type="hidden" id="expense-id" />
+      <div class="field-row">
+        <div class="field">
+          <label for="expense-amount">Amount</label>
+          <input id="expense-amount" type="number" min="0.01" step="0.01" required placeholder="0.00" />
+        </div>
+        <div class="field">
+          <label for="expense-date">Date</label>
+          <input id="expense-date" type="date" required />
+        </div>
+      </div>
+      <div class="field">
+        <label for="expense-description">Description</label>
+        <input id="expense-description" type="text" placeholder="e.g. Weekly groceries" />
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <div class="chip-picker" id="expense-category-picker"></div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="expense-payment">Payment method</label>
+          <select id="expense-payment">
+            <option value="cash">Cash</option>
+            <option value="card">Card</option>
+            <option value="bank_transfer">Bank transfer</option>
+            <option value="mobile_wallet">Mobile wallet</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="expense-recurring">Recurring</label>
+          <select id="expense-recurring">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label for="expense-notes">Notes (optional)</label>
+        <textarea id="expense-notes" placeholder="Any extra detail…"></textarea>
+      </div>
+      <div class="error-text" id="expense-error"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close-modal="expense-modal-overlay">Cancel</button>
+        <button type="submit" class="btn btn-copper" id="expense-submit-btn">Save expense</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ CATEGORY MODAL ============ -->
+<div class="modal-overlay" id="category-modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="category-modal-title">New category</h2>
+      <button class="modal-close" data-close-modal="category-modal-overlay">×</button>
+    </div>
+    <form id="category-form">
+      <input type="hidden" id="category-id" />
+      <div class="field">
+        <label for="category-name">Name</label>
+        <input id="category-name" type="text" required placeholder="e.g. Pet care" />
+      </div>
+      <div class="field">
+        <label for="category-color">Color</label>
+        <input id="category-color" type="color" value="#B5652B" style="height:44px; padding:4px;" />
+      </div>
+      <div class="error-text" id="category-error"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close-modal="category-modal-overlay">Cancel</button>
+        <button type="submit" class="btn btn-copper">Save category</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ BUDGET MODAL ============ -->
+<div class="modal-overlay" id="budget-modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Set category budget</h2>
+      <button class="modal-close" data-close-modal="budget-modal-overlay">×</button>
+    </div>
+    <form id="budget-form">
+      <div class="field">
+        <label for="budget-category">Category</label>
+        <select id="budget-category" required></select>
+      </div>
+      <div class="field">
+        <label for="budget-amount">Monthly limit</label>
+        <input id="budget-amount" type="number" min="0.01" step="0.01" required placeholder="0.00" />
+      </div>
+      <div class="error-text" id="budget-error"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close-modal="budget-modal-overlay">Cancel</button>
+        <button type="submit" class="btn btn-copper">Save budget</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

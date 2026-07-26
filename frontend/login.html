@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign in — Ledger</title>
+<link rel="stylesheet" href="css/style.css" />
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <div class="auth-shell">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <div class="mark">L</div>
+        <div class="name">Ledger</div>
+      </div>
+
+      <h1>Welcome back</h1>
+      <p class="auth-sub">Sign in to keep track of where your money goes.</p>
+
+      <div id="google-btn-container"></div>
+      <div class="divider">or sign in with email</div>
+
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label for="login-email">Email</label>
+          <input id="login-email" type="email" required autocomplete="email" placeholder="you@example.com" />
+        </div>
+        <div class="field">
+          <label for="login-password">Password</label>
+          <input id="login-password" type="password" required autocomplete="current-password" placeholder="••••••••" />
+        </div>
+        <div class="error-text" id="login-error"></div>
+        <button type="submit" id="login-submit" class="btn btn-primary btn-block">Sign in</button>
+      </form>
+
+      <p class="auth-foot">New to Ledger? <a href="signup.html">Create an account</a></p>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: ledger-backend
+    env: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "10080"
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+
+  - type: web
+    name: ledger-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: >-
+      sed -i "s#http://127.0.0.1:8000#${LEDGER_API_BASE}#" js/config.js &&
+      sed -i "s#window.LEDGER_GOOGLE_CLIENT_ID = \"\"#window.LEDGER_GOOGLE_CLIENT_ID = \"${LEDGER_GOOGLE_CLIENT_ID}\"#" js/config.js
+    staticPublishPath: .
+    envVars:
+      - key: LEDGER_API_BASE
+        sync: false
+      - key: LEDGER_GOOGLE_CLIENT_ID
+        sync: false
