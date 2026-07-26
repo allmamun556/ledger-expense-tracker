@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Ledger — Expense Tracker</title>
+<script>document.documentElement.setAttribute("data-theme", localStorage.getItem("ledger_theme") || "light");</script>
 <link rel="stylesheet" href="css/style.css" />
 <script src="js/vendor/chart.umd.min.js"></script>
 </head>
@@ -262,6 +263,16 @@
             <div class="error-text" id="password-error"></div>
             <button type="submit" class="btn btn-ghost">Update password</button>
           </form>
+        </div>
+
+        <div class="card settings-card">
+          <h3>Appearance</h3>
+          <p class="sub" style="margin-bottom:14px;">Choose a color theme for Ledger.</p>
+          <select id="theme-select">
+            <option value="light">Paper (Light)</option>
+            <option value="dark">Midnight (Dark)</option>
+            <option value="slate">Slate</option>
+          </select>
         </div>
 
         <div class="card settings-card">

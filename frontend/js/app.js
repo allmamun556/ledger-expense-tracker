@@ -597,12 +597,19 @@ function loadSettingsView() {
   document.getElementById("settings-email").value = u.email;
   document.getElementById("settings-currency").value = u.currency;
   document.getElementById("settings-budget").value = u.monthly_budget || "";
+  document.getElementById("theme-select").value = localStorage.getItem("ledger_theme") || "light";
 
   const passwordSection = document.getElementById("password-form");
   const passwordHint = document.getElementById("password-hint");
   // Google-only accounts won't have a usable password flow server-side beyond setting one;
   // we still allow it since backend treats missing hashed_password gracefully.
 }
+
+document.getElementById("theme-select").addEventListener("change", (e) => {
+  const theme = e.target.value;
+  localStorage.setItem("ledger_theme", theme);
+  document.documentElement.setAttribute("data-theme", theme);
+});
 
 document.getElementById("profile-form").addEventListener("submit", async (e) => {
   e.preventDefault();
