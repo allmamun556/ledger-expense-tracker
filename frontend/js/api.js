@@ -137,6 +137,29 @@ const Api = {
     URL.revokeObjectURL(url);
   },
 
+  // Receipts
+  parseReceipt: async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch(`${API_BASE}/api/receipts/parse`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${Auth.getToken()}` },
+      body: formData,
+    });
+    if (res.status === 401) {
+      Auth.clear();
+      window.location.href = "login.html?expired=1";
+      return;
+    }
+    const isJson = res.headers.get("content-type")?.includes("application/json");
+    const data = isJson ? await res.json().catch(() => null) : null;
+    if (!res.ok) {
+      const detail = (data && data.detail) || `Couldn't read that receipt (${res.status}).`;
+      throw new ApiError(typeof detail === "string" ? detail : JSON.stringify(detail), res.status);
+    }
+    return data;
+  },
+
   // Reports
   summary: () => apiRequest("/api/reports/summary"),
   dailyTotals: (dateFrom, dateTo) => apiRequest(`/api/reports/daily?date_from=${dateFrom}&date_to=${dateTo}`),

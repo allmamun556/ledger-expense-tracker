@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import models
 from .config import settings
 from .database import engine
-from .routers import auth, categories, expenses, reports
+from .routers import auth, categories, expenses, receipts, reports
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -25,6 +25,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(categories.router)
 app.include_router(expenses.router)
+app.include_router(receipts.router)
 app.include_router(reports.router)
 
 

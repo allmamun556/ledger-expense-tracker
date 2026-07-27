@@ -341,9 +341,10 @@ async function deleteExpense(id) {
 // ---------------------------------------------------------------
 // Expense modal (create / edit)
 // ---------------------------------------------------------------
-function openExpenseModal(expenseId = null) {
+function openExpenseModal(expenseId = null, prefill = null) {
   state.editingExpenseId = expenseId;
   document.getElementById("expense-error").textContent = "";
+  document.getElementById("expense-scan-banner").classList.toggle("hidden", !prefill);
   const picker = document.getElementById("expense-category-picker");
   picker.querySelectorAll(".chip").forEach((c) => c.classList.remove("selected"));
   delete picker.dataset.selectedId;
@@ -371,7 +372,24 @@ function openExpenseModal(expenseId = null) {
     document.getElementById("expense-submit-btn").textContent = "Save expense";
     document.getElementById("expense-form").reset();
     document.getElementById("expense-id").value = "";
-    document.getElementById("expense-date").value = todayIso();
+    document.getElementById("expense-date").value = prefill?.date || todayIso();
+
+    if (prefill) {
+      if (prefill.amount != null) document.getElementById("expense-amount").value = prefill.amount;
+      document.getElementById("expense-description").value = prefill.description || "";
+      if (prefill.payment_method) document.getElementById("expense-payment").value = prefill.payment_method;
+      const noteParts = [];
+      if (prefill.merchant) noteParts.push(`Merchant: ${prefill.merchant}`);
+      if (prefill.notes) noteParts.push(prefill.notes);
+      document.getElementById("expense-notes").value = noteParts.join(" — ");
+      if (prefill.category_id) {
+        const chip = picker.querySelector(`.chip[data-id="${prefill.category_id}"]`);
+        if (chip) {
+          chip.classList.add("selected");
+          picker.dataset.selectedId = prefill.category_id;
+        }
+      }
+    }
   }
   openModal("expense-modal-overlay");
 }
@@ -407,6 +425,60 @@ document.getElementById("expense-form").addEventListener("submit", async (e) => 
   } catch (err) {
     errorEl.textContent = err.message;
   }
+});
+
+// ---------------------------------------------------------------
+// Scan receipt
+// ---------------------------------------------------------------
+function openScanModal() {
+  document.getElementById("scan-error").textContent = "";
+  document.getElementById("scan-status").classList.add("hidden");
+  openModal("scan-modal-overlay");
+}
+document.getElementById("open-scan-dash").addEventListener("click", openScanModal);
+document.getElementById("open-scan-list").addEventListener("click", openScanModal);
+
+document.getElementById("scan-take-photo-btn").addEventListener("click", () => {
+  document.getElementById("scan-camera-input").click();
+});
+document.getElementById("scan-upload-btn").addEventListener("click", () => {
+  document.getElementById("scan-upload-input").click();
+});
+
+async function handleReceiptFile(file) {
+  if (!file) return;
+  const errorEl = document.getElementById("scan-error");
+  const statusEl = document.getElementById("scan-status");
+  errorEl.textContent = "";
+  statusEl.classList.remove("hidden");
+  document.getElementById("scan-take-photo-btn").disabled = true;
+  document.getElementById("scan-upload-btn").disabled = true;
+
+  try {
+    const parsed = await Api.parseReceipt(file);
+    closeModal("scan-modal-overlay");
+    if (!parsed.amount && !parsed.description) {
+      toast("Couldn't find much on that receipt — please fill in the details.", "info");
+    } else {
+      toast("Receipt read — review the details and save.", "success");
+    }
+    openExpenseModal(null, parsed);
+  } catch (err) {
+    errorEl.textContent = err.message;
+  } finally {
+    statusEl.classList.add("hidden");
+    document.getElementById("scan-take-photo-btn").disabled = false;
+    document.getElementById("scan-upload-btn").disabled = false;
+  }
+}
+
+document.getElementById("scan-camera-input").addEventListener("change", (e) => {
+  handleReceiptFile(e.target.files[0]);
+  e.target.value = "";
+});
+document.getElementById("scan-upload-input").addEventListener("change", (e) => {
+  handleReceiptFile(e.target.files[0]);
+  e.target.value = "";
 });
 
 // ---------------------------------------------------------------

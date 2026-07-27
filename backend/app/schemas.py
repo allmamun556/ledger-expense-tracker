@@ -113,6 +113,20 @@ class PaginatedExpenses(BaseModel):
     items: list[ExpenseOut]
 
 
+# ---------- Receipt scanning ----------
+
+class ReceiptParseOut(BaseModel):
+    amount: Optional[float] = None
+    date: Optional[dt.date] = None
+    description: Optional[str] = None
+    merchant: Optional[str] = None
+    currency: Optional[str] = None
+    payment_method: Optional[str] = None
+    notes: Optional[str] = None
+    category_id: Optional[int] = None
+    category_name: Optional[str] = None
+
+
 # ---------- Budgets ----------
 
 class CategoryBudgetCreate(BaseModel):

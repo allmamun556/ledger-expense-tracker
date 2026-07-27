@@ -68,7 +68,10 @@
           <h1>Good to see you, <span id="greeting-name">there</span></h1>
           <div class="sub" id="dashboard-date"></div>
         </div>
-        <button class="btn btn-copper" id="open-add-expense-dash">+ Add expense</button>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-ghost" id="open-scan-dash">📷 Scan receipt</button>
+          <button class="btn btn-copper" id="open-add-expense-dash">+ Add expense</button>
+        </div>
       </div>
 
       <div class="stat-grid">
@@ -137,6 +140,7 @@
             <option value="pdf">PDF</option>
           </select>
           <button class="btn btn-ghost" id="export-csv-btn">Export</button>
+          <button class="btn btn-ghost" id="open-scan-list">📷 Scan receipt</button>
           <button class="btn btn-copper" id="open-add-expense-list">+ Add expense</button>
         </div>
       </div>
@@ -298,6 +302,25 @@
   </main>
 </div>
 
+<!-- ============ SCAN RECEIPT MODAL ============ -->
+<div class="modal-overlay" id="scan-modal-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Scan receipt</h2>
+      <button class="modal-close" data-close-modal="scan-modal-overlay">×</button>
+    </div>
+    <p class="scan-hint">Take a photo or upload an image/PDF of a receipt — amount, date, merchant, and category will be read automatically. You'll get a chance to review before saving.</p>
+    <div class="modal-actions" style="margin-top:0;">
+      <button type="button" class="btn btn-ghost" id="scan-take-photo-btn">📷 Take photo</button>
+      <button type="button" class="btn btn-copper" id="scan-upload-btn">⬆ Upload file</button>
+    </div>
+    <div class="scan-status hidden" id="scan-status"><span class="spinner spinner-copper"></span> Reading receipt…</div>
+    <div class="error-text" id="scan-error"></div>
+  </div>
+</div>
+<input type="file" id="scan-camera-input" accept="image/*" capture="environment" class="hidden" />
+<input type="file" id="scan-upload-input" accept="image/*,application/pdf" class="hidden" />
+
 <!-- ============ EXPENSE MODAL ============ -->
 <div class="modal-overlay" id="expense-modal-overlay">
   <div class="modal">
@@ -305,6 +328,7 @@
       <h2 id="expense-modal-title">Add expense</h2>
       <button class="modal-close" data-close-modal="expense-modal-overlay">×</button>
     </div>
+    <div class="scan-hint hidden" id="expense-scan-banner" style="background:rgba(181,101,43,0.1); border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:16px;">🧾 Filled in from your receipt scan — please double-check before saving.</div>
     <form id="expense-form">
       <input type="hidden" id="expense-id" />
       <div class="field-row">

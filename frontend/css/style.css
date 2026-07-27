@@ -547,7 +547,14 @@ table.ledger-table { width: 100%; border-collapse: collapse; }
   border: 2px solid rgba(239,234,224,0.35); border-top-color: var(--chrome-text);
   animation: spin .7s linear infinite; display: inline-block;
 }
+.spinner.spinner-copper {
+  border-color: var(--paper-line); border-top-color: var(--copper);
+}
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------------- Scan receipt ---------------- */
+.scan-status { margin-top: 18px; text-align: center; color: var(--slate); font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.scan-hint { color: var(--slate); font-size: 14px; margin-bottom: 18px; }
 
 .hidden { display: none !important; }
 

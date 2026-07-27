@@ -12,6 +12,7 @@ A full-stack web app for tracking daily and monthly expenses: FastAPI + SQLite b
 - **Budgets**: set a monthly limit per category with a progress bar (turns red when over)
 - **Settings**: currency, overall monthly budget, change password, sign out
 - **CSV export** of all expenses or the currently filtered set
+- **Scan receipt**: take a photo or upload an image/PDF of a receipt and have the amount, date, merchant, and category read automatically (via a free Gemini API key) into a pre-filled Add Expense form for review
 
 ## Project layout
 
@@ -24,7 +25,7 @@ expense-tracker/
 │   │   ├── schemas.py      Pydantic request/response models
 │   │   ├── auth.py         password hashing + JWT
 │   │   ├── crud.py         default-category seeding
-│   │   └── routers/        auth, categories, expenses, reports
+│   │   └── routers/        auth, categories, expenses, receipts, reports
 │   ├── requirements.txt
 │   └── .env.example
 └── frontend/           Static HTML/CSS/JS (no build step)
@@ -88,6 +89,16 @@ Email/password sign-up works out of the box with no configuration. Google Sign-I
 6. Restart the backend.
 
 Until this is configured, the Google button area on the login/signup pages simply shows a note and email/password sign-in keeps working normally.
+
+## 4. (Optional) Enable "Scan receipt"
+
+Take a photo or upload an image/PDF of a receipt and have the amount, date, merchant, and category read automatically:
+
+1. Go to [Google AI Studio → API keys](https://aistudio.google.com/apikey) and click **Create API key**. It's free, no credit card required.
+2. Paste it into `backend/.env` → `GEMINI_API_KEY=...`.
+3. Restart the backend.
+
+Until this is configured, the "Scan receipt" button shows a clear error and every other feature works as normal. Files are sent to Google's Gemini API (`gemini-flash-latest`) for reading only — nothing is stored on Google's side beyond normal API processing.
 
 ## How auth works
 
