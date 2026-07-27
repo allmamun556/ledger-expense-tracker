@@ -113,12 +113,14 @@
           <div class="spacer"></div>
           <button class="btn btn-ghost btn-sm" data-goto="expenses">View all</button>
         </div>
-        <table class="ledger-table">
-          <thead>
-            <tr><th>Date</th><th>Description</th><th>Category</th><th style="text-align:right;">Amount</th></tr>
-          </thead>
-          <tbody id="recent-expenses-body"></tbody>
-        </table>
+        <div class="table-scroll">
+          <table class="ledger-table">
+            <thead>
+              <tr><th>Date</th><th>Description</th><th>Category</th><th style="text-align:right;">Amount</th></tr>
+            </thead>
+            <tbody id="recent-expenses-body"></tbody>
+          </table>
+        </div>
         <div id="recent-empty" class="empty-state hidden">
           <div class="glyph">🧾</div>
           <h3>No expenses yet</h3>
@@ -158,12 +160,14 @@
             <option value="amount-asc">Lowest amount</option>
           </select>
         </div>
-        <table class="ledger-table">
-          <thead>
-            <tr><th>Date</th><th>Description</th><th>Category</th><th>Payment</th><th style="text-align:right;">Amount</th><th></th></tr>
-          </thead>
-          <tbody id="expenses-body"></tbody>
-        </table>
+        <div class="table-scroll">
+          <table class="ledger-table">
+            <thead>
+              <tr><th>Date</th><th>Description</th><th>Category</th><th>Payment</th><th style="text-align:right;">Amount</th><th></th></tr>
+            </thead>
+            <tbody id="expenses-body"></tbody>
+          </table>
+        </div>
         <div id="expenses-empty" class="empty-state hidden">
           <div class="glyph">🧾</div>
           <h3>No matching expenses</h3>

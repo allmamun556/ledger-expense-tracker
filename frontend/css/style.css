@@ -407,7 +407,8 @@ textarea { resize: vertical; min-height: 70px; }
 .ledger-toolbar .search { flex: 1; min-width: 180px; }
 .ledger-toolbar .spacer { flex: 1; }
 
-table.ledger-table { width: 100%; border-collapse: collapse; }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table.ledger-table { width: 100%; min-width: 560px; border-collapse: collapse; }
 .ledger-table thead th {
   text-align: left;
   font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em;
